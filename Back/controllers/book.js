@@ -30,7 +30,7 @@ exports.addBook = (req, res, next) => {
 exports.updateBook = (req, res, next) => {
     const bookObject = req.file ? {
         ...JSON.parse(req.body.book),
-        imageUrl: `${req.protocol}://${req.get('host')}/${req.file.name}`
+        imageUrl: req.file ? `${req.protocol}://${req.get('host')}/${req.file.name}` : null
     } : { ...req.body };
 
     delete bookObject._id;
