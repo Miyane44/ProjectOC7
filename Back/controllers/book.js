@@ -30,18 +30,30 @@ exports.addBook = (req, res, next) => {
 exports.updateBook = (req, res, next) => {
     const bookObject = req.file ? {
         ...JSON.parse(req.body.book),
-        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+        imageUrl: `${req.protocol}://${req.get('host')}/${req.file.name}`
     } : { ...req.body };
 
     delete bookObject._id;
 
     Book.findOne( { _id: req.params.id })
     .then((book) => {
-        if (book.userId != req.auth.user) {
+        if (book.userId != req.auth.userId) {
             res.status(403).json( {message: 'Vous n\'êtes pas autorisé à modifier ce livre.' });
         } else {
+            const oldImage = book.imageUrl;
             Book.updateOne( { _id: req.params.id }, { ...bookObject, _id: req.params.id })
-            .then(() => res.status(200).json({ message: 'Livre modifié.' }))
+            .then(() => {
+                if (req.file && oldImage) {
+                    const filename = oldImage.split('/images/')[1];
+                    console.log("filename", filename);
+                    fs.unlink(`images/${filename}`, (error) => {
+                        if (error) {
+                            return res.status(400).json({ message: "Une erreur est survenue lors de la suppression de l'ancienne image : ", error });
+                        }
+                    });
+                }
+                res.status(200).json({ message: 'Livre modifié.' });
+            })
             .catch(error => res.status(400).json( {error} ));
         }
     })
