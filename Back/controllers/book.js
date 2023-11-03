@@ -45,7 +45,6 @@ exports.updateBook = (req, res, next) => {
             .then(() => {
                 if (req.file && oldImage) {
                     const filename = oldImage.split('/images/')[1];
-                    console.log("filename", filename);
                     fs.unlink(`images/${filename}`, (error) => {
                         if (error) {
                             return res.status(400).json({ message: "Une erreur est survenue lors de la suppression de l'ancienne image : ", error });
