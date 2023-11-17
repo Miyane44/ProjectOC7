@@ -19,7 +19,8 @@ const improveImage = (req, res, next) => {
       const buffer = req.file.buffer;
 
       sharp(buffer)
-        .webp({ quality: 80 })
+        .resize(600, 753, { fit: 'cover', withoutEnlargement: true })
+        .webp({ quality: 90 })
         .toFile(name, (err) => {
           if (err) {
             // Supprimer l'image non compressée en cas d'erreur
