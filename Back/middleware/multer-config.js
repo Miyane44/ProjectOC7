@@ -19,7 +19,7 @@ const improveImage = (req, res, next) => {
       const buffer = req.file.buffer;
 
       sharp(buffer)
-        .resize(600, 753, { fit: 'cover', withoutEnlargement: true })
+        .resize(405, 568, { fit: 'cover', withoutEnlargement: true })
         .webp({ quality: 90 })
         .toFile(name, (err) => {
           if (err) {
